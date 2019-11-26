@@ -1,0 +1,121 @@
+from student import *
+
+class Studentsystem(object):
+    def __init__(self):  # 系统的属性--保存数据
+        self.student_list = []
+
+    def run(self):  # 主函数，运行程序
+        self.load_info()  # 加载文件内信息，重点！
+        while True:
+            self.interface()
+            try:  # 可能会出现输入类型不是数字，所以需要try保证程序的正常运行
+                user_choose = int(input('请输入选择的功能序号：'))
+            except:  #未能正常运行的代码
+                print('请按序号输入功能代码！')
+            else:  # 正常运行未出现问题时运行的代码
+                if user_choose == 1:
+                    self.add_info()
+                elif user_choose == 2:
+                    self.del_info()
+                elif user_choose == 3:
+                    self.modify_info()
+                elif user_choose == 4:
+                    self.inquire_info()
+                elif user_choose == 5:
+                    self.show_info()
+                elif user_choose == 6:
+                    self.save_info()
+                elif user_choose == 7:
+                    exit_i = int(input('确定要退出系统吗？\n1.确定\n2.我点错了\n我选择：'))  # 给用户输入的提示
+                    if exit_i == 1:
+                        break
+                    else:
+                        print('好的，未退出！')
+
+    def load_info(self):
+        try:
+            f = open('student_info.data', 'r')
+        except:
+            f = open('student_info.data', 'w')
+        else:
+            data = f.read()
+            new_list = eval(data)  # 将字符串转化为列表类型
+            self.student_list = [Student(i['name'], i['gender'], i['tel']) for i in new_list]  # 将列表转换为对象类型
+
+    def interface(self):
+        print('欢迎使用学生管理系统，以下为本系统的主要功能：')
+        print('1.增加学生信息')
+        print('2.删除学生信息')
+        print('3.修改学生信息')
+        print('4.查询学生信息')
+        print('5.显示所有学生信息')
+        print('6.保存学生信息')
+        print('7.退出系统')
+
+    def add_info(self):
+        name = input('请输入学生的姓名：')
+        for i in self.student_list:
+            if i.name == name:
+                print('该同学已存在！可选择3功能进行修改信息')
+                return  # 不执行下面的代码
+        gender = input('请输入学生的姓别：')
+        tel = input('请输入学生的手机号：')
+        student = Student(name, gender, tel)
+        print(f'增加的信息为{student}，已保存成功！')
+        self.student_list.append(student)
+
+    def del_info(self):
+        name = input('请输入需要删除的学生姓名：')
+        for i in self.student_list:
+            if i.name == name:
+                print(f'找到该同学，信息如下：姓名：{i.name}，性别：{i.gender}，手机号：{i.tel}')
+                break
+        else:  # 放在与if齐平会在for中循环打印，故在for齐列
+            print('未找到该同学，需要增加该同学的信息吗？可选择功能1')
+            return
+        del_i = int(input('确定删除此同学的信息吗？\n1.确定\n2.我再想想\n我选择：'))
+        if del_i == 1:
+            self.student_list.remove(i)
+            print('该同学信息已删除！')
+        else:
+            print('好的，你在好好斟酌下！')
+
+    def modify_info(self):
+        name = input('请输入需要修改的学生姓名：')
+        for i in self.student_list:
+            if i.name == name:
+                print(f'找到该同学，信息如下：姓名：{i.name}，性别：{i.gender}，手机号：{i.tel}')
+                break
+        else:  # 放在与if齐平会在for中循环打印，故在for齐列
+            print('未找到该同学，需要增加该同学的信息吗？可选择功能1')
+            return
+        modify_i = int(input('确定修改此同学的信息吗？\n1.确定\n2.我再想想\n我选择：'))
+        if modify_i == 1:
+            i.gender = input('请输入学生的姓别：')
+            i.tel = input('请输入学生的手机号：')
+            print('该同学信息已修改！')
+        else:
+            print('好的，你在好好斟酌下！')
+
+    def inquire_info(self):
+        name = input('请输入需要查询的学生姓名：')
+        for i in self.student_list:
+            if i.name == name:
+                print(f'找到该同学，信息如下：姓名：{i.name}，性别：{i.gender}，手机号：{i.tel}')
+
+    def show_info(self):
+        print('所有学生信息：')
+        for i in self.student_list:
+            print(f'姓名：{i.name}，性别：{i.gender}，手机号：{i.tel}')
+        print('以上为目前保存的所有学生信息')
+
+    def save_info(self):
+        new_list = [i.__dict__ for i in self.student_list]
+        # 将self.student_list这个对象进行遍历，并使用__dict__将遍历出来的每一个学生信息转化为字典形式，最后以[]保存为列表类型
+        with open('student_info.data', 'w') as f:
+            f.write(str(new_list))
+        print('信息已保存到student_info.data文件！')
+
+
+student_system = Studentsystem()
+
