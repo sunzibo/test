@@ -1,0 +1,5 @@
+from StudentSystem import *
+
+if __name__ == '__main__':
+    student_system = Studentsystem()
+    student_system.run()
